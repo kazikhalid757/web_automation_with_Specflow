@@ -9,14 +9,12 @@ namespace Tumblr.PageObjects
         private readonly IWebDriver _driver;
         private readonly WebDriverWait _wait;
 
-        // Locators
-        private readonly By _loginButton = By.XPath("//span[normalize-space()='Log in']");
-        private readonly By _continueWithEmailButton = By.XPath("//button[normalize-space()='Continue with email']");
+        // Updated Locators for rav.ai application
+        private readonly By _signInButton = By.XPath("//button[@class='email__button']");
         private readonly By _emailField = By.XPath("//input[@placeholder='Email']");
-        private readonly By _nextButton = By.XPath("//button[@aria-label='Next']");
         private readonly By _passwordField = By.XPath("//input[@placeholder='Password']");
-        private readonly By _submitLoginButton = By.XPath("//button[@type='submit']//span[normalize-space()='Log in']");
-        private readonly By _homePageNavigation = By.XPath("//nav[@class='NkkDk']");
+        private readonly By _submitButton = By.XPath("//button[@type='submit']");
+        private readonly By _dashboardPage = By.XPath("//span[normalize-space()='Dashboard']");
 
         public LoginPage(IWebDriver driver, WebDriverWait wait)
         {
@@ -29,14 +27,9 @@ namespace Tumblr.PageObjects
             _driver.Navigate().GoToUrl(TestConfiguration.BaseUrl);
         }
 
-        public void ClickLoginButton()
+        public void ClickSignInButton()
         {
-            _wait.Until(driver => driver.FindElement(_loginButton)).Click();
-        }
-
-        public void ClickContinueWithEmail()
-        {
-            _wait.Until(driver => driver.FindElement(_continueWithEmailButton)).Click();
+            _wait.Until(driver => driver.FindElement(_signInButton)).Click();
         }
 
         public void EnterEmail(string email)
@@ -44,26 +37,21 @@ namespace Tumblr.PageObjects
             _wait.Until(driver => driver.FindElement(_emailField)).SendKeys(email);
         }
 
-        public void ClickNextButton()
-        {
-            _wait.Until(driver => driver.FindElement(_nextButton)).Click();
-        }
-
         public void EnterPassword(string password)
         {
             _wait.Until(driver => driver.FindElement(_passwordField)).SendKeys(password);
         }
 
-        public void ClickSubmitLogin()
+        public void ClickSubmitButton()
         {
-            _wait.Until(driver => driver.FindElement(_submitLoginButton)).Click();
+            _wait.Until(driver => driver.FindElement(_submitButton)).Click();
         }
 
-        public bool IsHomePageDisplayed()
+        public bool IsDashboardDisplayed()
         {
             try
             {
-                return _wait.Until(driver => driver.FindElement(_homePageNavigation)).Displayed;
+                return _wait.Until(driver => driver.FindElement(_dashboardPage)).Displayed;
             }
             catch
             {
@@ -75,7 +63,7 @@ namespace Tumblr.PageObjects
         {
             try
             {
-                return _wait.Until(driver => driver.FindElement(_continueWithEmailButton)).Displayed;
+                return _wait.Until(driver => driver.FindElement(_emailField)).Displayed;
             }
             catch
             {

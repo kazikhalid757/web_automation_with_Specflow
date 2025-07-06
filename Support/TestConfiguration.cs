@@ -14,11 +14,11 @@ namespace Tumblr.Support
                 .Build();
         }
 
-        public static string BaseUrl => _configuration?["TestSettings:BaseUrl"] ?? "https://www.tumblr.com/";
+        public static string BaseUrl => _configuration?["TestSettings:BaseUrl"] ?? "https://app.rav.ai/sign_in";
         public static string Browser => _configuration?["TestSettings:Browser"] ?? "Chrome";
         public static int ImplicitWait => int.Parse(_configuration?["TestSettings:ImplicitWait"] ?? "10");
         public static int PageLoadTimeout => int.Parse(_configuration?["TestSettings:PageLoadTimeout"] ?? "30");
-        public static string TestEmail => _configuration?["TestData:Email"] ?? "test@example.com";
-        public static string TestPassword => _configuration?["TestData:Password"] ?? "testpassword123";
+        public static string TestEmail => _configuration?["TestData:Email"] ?? "automation1@fexbox.org";
+        public static string TestPassword => _configuration?["TestData:Password"] ?? "Test@0202";
     }
 } 
