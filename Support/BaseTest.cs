@@ -7,37 +7,51 @@ namespace Tumblr.Support
 {
     public abstract class BaseTest
     {
-        protected IWebDriver? Driver { get; private set; }
-        protected WebDriverWait? Wait { get; private set; }
+        private static IWebDriver? _sharedDriver;
+        private static WebDriverWait? _sharedWait;
+        private static bool _isInitialized = false;
+
+        protected IWebDriver? Driver => _sharedDriver;
+        protected WebDriverWait? Wait => _sharedWait;
 
         [BeforeScenario]
         public virtual void Setup()
         {
-            var options = new ChromeOptions();
-            options.AddArgument("--no-sandbox");
-            options.AddArgument("--disable-dev-shm-usage");
-            options.AddArgument("--disable-gpu");
-            options.AddArgument("--window-size=1920,1080");
-            options.AddArgument("--disable-web-security");
-            options.AddArgument("--disable-features=VizDisplayCompositor");
-            options.AddArgument("--disable-extensions");
-            options.AddArgument("--disable-plugins");
-            //options.AddArgument("--headless"); // Run in headless mode for faster execution
+            if (!_isInitialized)
+            {
+                var options = new ChromeOptions();
+                options.AddArgument("--no-sandbox");
+                options.AddArgument("--disable-dev-shm-usage");
+                options.AddArgument("--disable-gpu");
+                options.AddArgument("--window-size=1920,1080");
+                options.AddArgument("--disable-web-security");
+                options.AddArgument("--disable-features=VizDisplayCompositor");
+                options.AddArgument("--disable-extensions");
+                options.AddArgument("--disable-plugins");
+                //options.AddArgument("--headless"); // Run in headless mode for faster execution
 
-            Driver = new ChromeDriver(options);
-            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TestConfiguration.ImplicitWait);
-            Driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(TestConfiguration.PageLoadTimeout);
-            Driver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(30);
-            Driver.Manage().Window.Maximize();
+                _sharedDriver = new ChromeDriver(options);
+                _sharedDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TestConfiguration.ImplicitWait);
+                _sharedDriver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(TestConfiguration.PageLoadTimeout);
+                _sharedDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(30);
+                _sharedDriver.Manage().Window.Maximize();
 
-            Wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(TestConfiguration.ImplicitWait));
+                _sharedWait = new WebDriverWait(_sharedDriver, TimeSpan.FromSeconds(TestConfiguration.ImplicitWait));
+                _isInitialized = true;
+            }
         }
 
         [AfterScenario]
         public void Teardown()
         {
-            Driver?.Quit();
-            Driver?.Dispose();
+            if (_isInitialized && _sharedDriver != null)
+            {
+                _sharedDriver.Quit();
+                _sharedDriver.Dispose();
+                _sharedDriver = null;
+                _sharedWait = null;
+                _isInitialized = false;
+            }
         }
 
         protected IWebElement WaitForElement(By locator)
